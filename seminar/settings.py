@@ -33,7 +33,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework', # DRF 라이브러리
+    'drf_spectacular',
     'post.apps.PostConfig', # post/apps.py내에 정의된 PostConfig 클래스를 지칭
+    'account.apps.AccountConfig',
+    'tag.apps.TagConfig', # tag/apps.py내에 정의된 TagConfig 클래스를 지칭 
 ]
 
 MIDDLEWARE = [
@@ -115,5 +118,16 @@ STATIC_URL = 'static/'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES' : (
         'rest_framework.permissions.AllowAny',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Likelion_API',
+    'DESCRIPTION': 'DRF 세미나 API 명세서입니다.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
+
+AUTH_USER_MODEL = 'account.User'
