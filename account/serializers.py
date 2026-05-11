@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):
+class SignupSerializer(serializers.ModelSerializer):
     # 비밀번호는 쓰기 전용으로 설정 (조회 시 노출 방지)
     password = serializers.CharField(write_only=True)
 
@@ -21,3 +21,10 @@ class UserSerializer(serializers.ModelSerializer):
             major=validated_data.get('major')
         )
         return user
+    
+class LoginSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password']
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(write_only=True, required=True)
