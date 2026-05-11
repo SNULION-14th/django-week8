@@ -7,7 +7,6 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/post/', include('post.urls')), # post/의 urls.py 파일로 가서 url을 찾아라
     path('api/chat/', include('chat.urls')),
 
     # 추가
