@@ -34,9 +34,10 @@ class TodoListView(APIView):
         due_date = request.data.get('due_date')
         field = request.data.get('field')
         priority = request.data.get('priority')
+        user = request.user
         if not title or not due_date:
             return Response({"detail": "[title, due_date] fields missing."}, status=status.HTTP_400_BAD_REQUEST)
-        todo = TodoList.objects.create(title=title, due_date=due_date, field=field, priority=priority)
+        todo = TodoList.objects.create(title=title, due_date=due_date, field=field, priority=priority, user=user)
         serializer = TodoListSerializer(todo)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
             
@@ -92,13 +93,14 @@ class RoutineListView(APIView):
         day = request.data.get('day')
         time = request.data.get('time')
         field = request.data.get('field')
+        user = request.user
         
         if not title or not day or not time:
             return Response({"detail": "[title, day, time] fields missing."}, status=status.HTTP_400_BAD_REQUEST)
         
         # user는 현재 로그인한 유저를 자동으로 할당 (또는 request에서 받기)
         routine = Routine.objects.create(
-            title=title, day=day, time=time, field=field, user=request.user
+            title=title, day=day, time=time, field=field, user=user
         )
         serializer = RoutineSerializer(routine)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -142,12 +144,12 @@ class CalendarListView(APIView):
         title = request.data.get('title')
         date = request.data.get('date')
         field = request.data.get('field')
-        
+        user = request.user
         if not title or not date:
             return Response({"detail": "[title, date] fields missing."}, status=status.HTTP_400_BAD_REQUEST)
         
         calendar = Calendar.objects.create(
-            title=title, date=date, field=field, user=request.user
+            title=title, date=date, field=field, user=user
         )
         serializer = CalendarSerializer(calendar)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
