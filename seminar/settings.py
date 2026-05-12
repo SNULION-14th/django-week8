@@ -29,10 +29,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",  # DRF 라이브러리
     "drf_spectacular",  # Swagger 문서 생성 라이브러리
-    "post.apps.PostConfig",  # post/apps.py내에 정의된 PostConfig 클래스를 지칭
-    "account.apps.AccountConfig",  # account/apps.py내에 정의된 AccountConfig 클래스를 지칭
+    # "post.apps.PostConfig",  # post/apps.py내에 정의된 PostConfig 클래스를 지칭
+    # "account.apps.AccountConfig",  # account/apps.py내에 정의된 AccountConfig 클래스를 지칭
     # 추가
-    "tag.apps.TagConfig",  # tag/apps.py내에 정의된 TagConfig 클래스를 지칭
+    # "tag.apps.TagConfig",  # tag/apps.py내에 정의된 TagConfig 클래스를 지칭
+    "major",
 ]
 
 MIDDLEWARE = [
@@ -123,4 +124,4 @@ SPECTACULAR_SETTINGS = {
     # OTHER SETTINGS
 }
 
-AUTH_USER_MODEL = "account.User"
+# AUTH_USER_MODEL = "account.User"
