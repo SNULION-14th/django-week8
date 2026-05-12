@@ -1,7 +1,11 @@
-# ./post/admin.py
-
 from django.contrib import admin
-from .models import Post  # 우리가 만든 Post 모델 불러오기
 
-# admin 사이트에 Post 모델 등록
-admin.site.register(Post)
+
+from .models import Artist, Song, SongArtist, User, Playlist, PlaylistSong
+
+admin.site.register(Artist)
+admin.site.register(Song)
+admin.site.register(SongArtist)
+admin.site.register(User)
+admin.site.register(Playlist)
+admin.site.register(PlaylistSong)
