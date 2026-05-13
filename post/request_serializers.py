@@ -1,17 +1,31 @@
-# ./post/request_serializers.py
-
 from rest_framework import serializers
 
-from account.request_serializers import SignInRequestSerializer
 
-class PostListRequestSerializer(serializers.Serializer):
-    author = SignInRequestSerializer()
-    title = serializers.CharField()
-    content = serializers.CharField()
-    tags = serializers.ListField(child=serializers.CharField())
+class ArtistRequestSerializer(serializers.Serializer):
+    name = serializers.CharField()
 
-class PostDetailRequestSerializer(serializers.Serializer):
-    author = SignInRequestSerializer()
+
+class SongRequestSerializer(serializers.Serializer):
     title = serializers.CharField()
-    content = serializers.CharField()
-    tags = serializers.ListField(child=serializers.CharField())
+    lowest_pitch = serializers.CharField()
+    highest_pitch = serializers.CharField()
+
+
+class UserRequestSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    email = serializers.EmailField()
+    lowest_pitch = serializers.CharField()
+    highest_pitch = serializers.CharField()
+
+
+class PlaylistRequestSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    user_id = serializers.IntegerField()
+
+
+class SongArtistRequestSerializer(serializers.Serializer):
+    artist_id = serializers.IntegerField()
+
+
+class PlaylistSongRequestSerializer(serializers.Serializer):
+    song_id = serializers.IntegerField()
