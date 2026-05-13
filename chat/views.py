@@ -54,7 +54,10 @@ class UserViewSet(ModelViewSet):
     destroy=extend_schema(summary="채팅방 삭제"),
 )
 class ChatRoomViewSet(ModelViewSet):
-    queryset = ChatRoom.objects.select_related("created_by").all().order_by("id")
+    queryset = ChatRoom.objects.select_related(
+        "created_by",
+        "created_by__preferred_language_code",
+    ).order_by("id")
     serializer_class = ChatRoomSerializer
 
 
@@ -70,11 +73,13 @@ class ChatRoomMemberViewSet(ModelViewSet):
     queryset = (
         ChatRoomMember.objects.select_related(
             "chat_room",
+            "chat_room__created_by",
             "user",
+            "user__preferred_language_code",
             "display_language_code",
             "last_read_message",
+            "last_read_message__original_language_code",
         )
-        .all()
         .order_by("id")
     )
     serializer_class = ChatRoomMemberSerializer
@@ -92,10 +97,11 @@ class MessageViewSet(ModelViewSet):
     queryset = (
         Message.objects.select_related(
             "chat_room",
+            "chat_room__created_by",
             "sender",
+            "sender__preferred_language_code",
             "original_language_code",
         )
-        .all()
         .order_by("id")
     )
     serializer_class = MessageSerializer
@@ -113,9 +119,11 @@ class MessageTranslationViewSet(ModelViewSet):
     queryset = (
         MessageTranslation.objects.select_related(
             "message",
+            "message__chat_room",
+            "message__sender",
+            "message__original_language_code",
             "target_language_code",
         )
-        .all()
         .order_by("id")
     )
     serializer_class = MessageTranslationSerializer
