@@ -1,29 +1,21 @@
-# ./seminar/settings.py
-
 from pathlib import Path
 import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# OS에서 선언된 DEBUG 변수를 불러오고, 만약 없다면 False로 기본값을 설정합니다
 env = environ.Env(
-    DEBUG=(bool, False)
+    DEBUG=(bool, True)
 )
 
-# .env 파일을 가져와서, 해당 파일 내부의 SECRET_KEY라는 변수 내부의 값을 가져옵니다
 environ.Env.read_env(
     env_file=BASE_DIR / '.env'
 )
 
-# 파이썬 변수 선언하여 해당 값을 할당
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY', default='django-insecure-week8-dev-secret-key')
 DEBUG = env('DEBUG')
 
-# 추가
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -32,8 +24,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework', # DRF 라이브러리
-    'post.apps.PostConfig', # post/apps.py내에 정의된 PostConfig 클래스를 지칭
+    'rest_framework',
+    'drf_spectacular',
+    'chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
@@ -66,8 +59,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'seminar.wsgi.application'
 
 
-# Database
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -75,8 +66,6 @@ DATABASES = {
     }
 }
 
-
-# Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -94,8 +83,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -105,15 +92,18 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-
 STATIC_URL = 'static/'
 
-
-# 추가
-# AllowAny 뒤에 컴마 주의!
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES' : (
         'rest_framework.permissions.AllowAny',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Translated Chat API',
+    'DESCRIPTION': '사용자별 언어 자동 번역 채팅 서비스 CRUD API입니다.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
