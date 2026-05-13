@@ -1,6 +1,5 @@
-# ./post/models.py
 from django.db import models
-from django.conf import settings # 커스텀 User 모델을 참조하기 위해 가져옵니다.
+from django.conf import settings
 
 class Book(models.Model):
     book_id = models.AutoField(primary_key=True)
@@ -30,5 +29,3 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
-
-# (이하 Comment, Transaction, Review 모델도 동일하게 settings.AUTH_USER_MODEL을 사용하여 추가해 줍니다.)
