@@ -34,6 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework', # DRF 라이브러리
     'post.apps.PostConfig', # post/apps.py내에 정의된 PostConfig 클래스를 지칭
+    'task.apps.TaskConfig',
+    'account.apps.AccountConfig',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -115,5 +118,17 @@ STATIC_URL = 'static/'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES' : (
         'rest_framework.permissions.AllowAny',
-    )
+    ),
+
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'AutoTask_API',
+    'DESCRIPTION': 'AutoTask 서비스 API 명세서입니다.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
+
+AUTH_USER_MODEL = 'account.User'
