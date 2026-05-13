@@ -26,7 +26,7 @@ class UserProfileListView(APIView):
     )
     def post(self, request):
         serializer = UserProfileSerializer(data=request.data)
-        if serializer.is_valpk():
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -57,7 +57,7 @@ class UserProfileDetailView(APIView):
         except:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         serializer = UserProfileSerializer(user, data=request.data)
-        if serializer.is_valpk():
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -94,7 +94,7 @@ class StockListView(APIView):
     )
     def post(self, request):
         serializer = StockSerializer(data=request.data)
-        if serializer.is_valpk():
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -125,7 +125,7 @@ class StockDetailView(APIView):
         except:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         serializer = StockSerializer(stock, data=request.data)
-        if serializer.is_valpk():
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -162,7 +162,7 @@ class RecommendationListView(APIView):
     )
     def post(self, request):
         serializer = RecommendationSerializer(data=request.data)
-        if serializer.is_valpk():
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -194,7 +194,7 @@ class RecommendationDetailView(APIView):
         except:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         serializer = RecommendationSerializer(recommendation, data=request.data)
-        if serializer.is_valpk():
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -231,7 +231,7 @@ class ReasonListView(APIView):
     )
     def post(self, request):
         serializer = ReasonSerializer(data=request.data)
-        if serializer.is_valpk():
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -263,7 +263,7 @@ class ReasonDetailView(APIView):
         except:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         serializer = ReasonSerializer(reason, data=request.data)
-        if serializer.is_valpk():
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -300,7 +300,7 @@ class BookmarkListView(APIView):
     )
     def post(self, request):
         serializer = BookmarkSerializer(data=request.data)
-        if serializer.is_valpk():
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -332,7 +332,7 @@ class BookmarkDetailView(APIView):
         except:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
         serializer = BookmarkSerializer(bookmark, data=request.data)
-        if serializer.is_valpk():
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
