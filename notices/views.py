@@ -25,6 +25,7 @@ class NoticeListView(APIView):
     serializer = NoticeSerializer(notices, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class NoticeDetailView(APIView):
   @extend_schema(
     summary="공지 상세 조회",
@@ -41,14 +42,43 @@ class NoticeDetailView(APIView):
         return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
       serializer = NoticeSerializer(instance=notice)
-
       return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class SourceListView(APIView):
-  pass
+  @extend_schema(
+    summary="게시판 목록 조회",
+    description="게시판 목록을 조회합니다.",
+    responses={
+      200: SourceSerializer(many=True),
+      404: "Not Found",
+      400: "Bad Request",
+    },
+  )
+  def get(self, request):
+    sources = Source.objects.all()
+    serializer = SourceSerializer(sources, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class SourceDetailView(APIView):
-  pass
+  @extend_schema(
+    summary="게시판 상세 조회",
+    description="게시판 1개의 상세 정보를 조회합니다.",
+    responses={
+      200: SourceSerializer,
+      400: "Bad Request"
+    },
+  )
+  def get(self, request, source_id):
+      try:
+        source = Source.objects.get(id=source_id)
+      except:
+        return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+      serializer = SourceSerializer(instance=source)
+      return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class SourceSubscriptionListView(APIView):
   pass
