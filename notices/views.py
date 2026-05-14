@@ -8,7 +8,8 @@ from drf_spectacular.utils import extend_schema
 from utils.auth import authorize_user
 from .models import Notice, Source, SourceSubscription, InboxNotice
 from .serializers import NoticeSerializer, SourceSerializer, SourceSubscriptionSerializer, InboxNoticeSerializer
-from .request_serializers import SourceSubscriptionListRequestSerializer, SourceSubscriptionDetailRequestSerializer
+from .request_serializers import SourceSubscriptionListRequestSerializer
+from accounts.request_serializers import SignInRequestSerializer
 
 User = get_user_model()
 
@@ -85,8 +86,8 @@ class SourceDetailView(APIView):
 
 class SourceSubscriptionListView(APIView):
   @extend_schema(
-    summary="구독 중인 게시판 목록 조회",
-    description="구독 중인 게시판 목록을 조회합니다.",
+    summary="게시판 구독 목록 조회",
+    description="게시판 구독 목록을 조회합니다.",
     responses={
       200: SourceSubscriptionSerializer(many=True),
       404: "Not Found",
@@ -192,7 +193,90 @@ class SourceSubscriptionDetailView(APIView):
 
 
 class InboxNoticeListView(APIView):
-  pass
+  @extend_schema(
+    summary="공지 알림 목록 조회",
+    description="공지 알림 목록을 조회합니다.",
+    responses={
+      200: InboxNoticeSerializer(many=True),
+      404: "Not Found",
+      400: "Bad Request",
+    },
+  )
+  def get(self, request, user_id):
+    inbox_notices = InboxNotice.objects.filter(user=user_id)
+    serializer = InboxNoticeSerializer(inbox_notices, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class InboxNoticeDetailView(APIView):
-  pass
+  @extend_schema(
+    summary="공지 알림 상세 조회",
+    description="공지 알림 1개의 상세 정보를 조회합니다.",
+    responses={
+      200: InboxNoticeSerializer,
+      400: "Bad Request"
+    },
+  )
+  def get(self, request, user_id, inbox_id):
+    try:
+      inbox_notice = InboxNotice.objects.get(user=user_id, id=inbox_id)
+    except:
+      return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = InboxNoticeSerializer(instance=inbox_notice)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+  
+  @extend_schema(
+    summary="공지 알림 삭제",
+    description="공지 알림을 삭제합니다.",
+    responses={
+      204: "No Content",
+      404: "Not Found",
+      400: "Bad Request"
+    },
+  )
+  def delete(self, request, user_id, inbox_id):
+    try:
+      inbox_notice = InboxNotice.objects.get(user=user_id, id=inbox_id)
+    except:
+      return Response(
+        {"detail": "Inbox notice Not found."}, status=status.HTTP_404_NOT_FOUND
+      )
+
+    inbox_notice.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+  
+  @extend_schema(
+    summary="공지 알림 읽음 표시",
+    description="공지 알림을 읽음으로 표시합니다.",
+    request=SignInRequestSerializer,
+    responses={
+      200: InboxNoticeSerializer,
+      404: "Not Found",
+      400: "Bad Request"
+    },
+  )
+  def put(self, request, user_id, inbox_id):
+    try:
+      inbox_notice = InboxNotice.objects.get(user=user_id, id=inbox_id)
+    except:
+      return Response(
+        {"detail": "Inbox notice Not found."}, status=status.HTTP_404_NOT_FOUND
+      )
+
+    user_info = request.data
+
+    auth = authorize_user(User, user_info)
+    if not auth.is_auth:
+      return auth.response
+    if inbox_notice.user != auth.user:
+      return Response(
+        {"detail": "You are not the user of this inbox notice."},
+        status=status.HTTP_403_FORBIDDEN,
+      )
+    
+    inbox_notice.is_read = True
+
+    inbox_notice.save()
+    serializer = InboxNoticeSerializer(instance=inbox_notice)
+    return Response(serializer.data, status=status.HTTP_200_OK)
