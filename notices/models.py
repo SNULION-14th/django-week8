@@ -6,7 +6,7 @@ from django.conf import settings
 class Source(models.Model):
   name = models.CharField(max_length=128)
   url = models.URLField(max_length=1024)
-  crawl_interval_minutes = models.PositiveIntegerField()
+  crawl_interval_minutes = models.PositiveIntegerField(default=60)
   crawled_at = models.DateTimeField(null=True)
   created_at = models.DateTimeField(default=timezone.now)
 

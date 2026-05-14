@@ -124,14 +124,14 @@ class InterestDetailView(APIView):
     },
   )
   def get(self, request, user_id, interest_id):
-      try:
-        interest = User.objects.get(id=user_id).interests.get(id=interest_id)
-      except:
-        return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+    try:
+      interest = User.objects.get(id=user_id).interests.get(id=interest_id)
+    except:
+      return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-      serializer = InterestSerializer(instance=interest)
+    serializer = InterestSerializer(instance=interest)
 
-      return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_200_OK)
   
   @extend_schema(
     summary="관심사 삭제",
@@ -154,14 +154,14 @@ class InterestDetailView(APIView):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
   @extend_schema(
-      summary="관심사 수정",
-      description="관심사를 수정합니다.",
-      request=InterestDetailRequestSerializer,
-      responses={
-        200: InterestSerializer,
-        404: "Not Found",
-        400: "Bad Request"
-      },
+    summary="관심사 수정",
+    description="관심사를 수정합니다.",
+    request=InterestDetailRequestSerializer,
+    responses={
+      200: InterestSerializer,
+      404: "Not Found",
+      400: "Bad Request"
+    },
   )
   def put(self, request, user_id, interest_id):
     try:
