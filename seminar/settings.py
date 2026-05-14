@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework', # DRF 라이브러리
     'drf_spectacular', # Swagger 문서 생성 라이브러리
+    'django_extensions',
     'post.apps.PostConfig', # post/apps.py내에 정의된 PostConfig 클래스를 지칭
     'account.apps.AccountConfig', # account/apps.py내에 정의된 AccountConfig 클래스를 지칭
     # 추가

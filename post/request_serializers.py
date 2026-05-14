@@ -15,3 +15,8 @@ class PostDetailRequestSerializer(serializers.Serializer):
     title = serializers.CharField()
     content = serializers.CharField()
     tags = serializers.ListField(child=serializers.CharField())
+
+
+class CommentRequestSerializer(serializers.Serializer):
+    author = SignInRequestSerializer()
+    content = serializers.CharField()
