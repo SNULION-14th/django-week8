@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 
+from utils.auth import authorize_user
 from .models import Interest
 from .serializers import UserSerializer, InterestSerializer
 from .request_serializers import SignInRequestSerializer, SignUpRequestSerializer, InterestListRequestSerializer, InterestDetailRequestSerializer
@@ -91,42 +92,23 @@ class InterestListView(APIView):
     keyword = request.data.get("keyword")
     description = request.data.get("description")
     priority = request.data.get("priority")
-    if not user_info:
+
+    auth = authorize_user(User, user_info)
+    if not auth.is_auth:
+      return auth.response
+    if user_id != auth.user.id:
       return Response(
-        {"detail": "user field missing."},
-        status=status.HTTP_400_BAD_REQUEST
-      )
-    
-    username = user_info.get("username")
-    password = user_info.get("password")
-    if not username or not password:
-      return Response(
-        {"detail": "[username, password] fields missing in user"},
+        {"detail": "User unmatched"},
         status=status.HTTP_400_BAD_REQUEST,
       )
+    
     if not (keyword and description and (priority != None)):
       return Response(
         {"detail": "[keyword, description, priority] fields missing."},
         status=status.HTTP_400_BAD_REQUEST,
       )
     
-    try:
-      user = User.objects.get(username=username)
-      if not user.check_password(password):
-        return Response(
-          {"detail": "Password is incorrect."},
-          status=status.HTTP_400_BAD_REQUEST,
-        )
-      if user_id != user.id:
-        return Response(
-          {"detail": "User unmatched"},
-          status=status.HTTP_400_BAD_REQUEST,
-        )
-      interest = Interest.objects.create(user=user, keyword=keyword, description=description, priority=priority)
-    except:
-      return Response(
-        {"detail": "User Not found."}, status=status.HTTP_404_NOT_FOUND
-      )
+    interest = Interest.objects.create(user=auth.user, keyword=keyword, description=description, priority=priority)
 
     serializer = InterestSerializer(interest)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -190,32 +172,19 @@ class InterestDetailView(APIView):
       )
 
     user_info = request.data.get("user")
-    if not user_info:
-      return Response(
-        {"detail": "user field missing."}, status=status.HTTP_400_BAD_REQUEST
-      )
-    username = user_info.get("username")
-    password = user_info.get("password")
-    try:
-      user = User.objects.get(username=username)
-      if not user.check_password(password):
-        return Response(
-            {"detail": "Password is incorrect."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-      if interest.user != user:
-        return Response(
-          {"detail": "You are not the user of this interest."},
-          status=status.HTTP_403_FORBIDDEN,
-        )
-    except:
-      return Response(
-        {"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND
-      )
-    
     keyword = request.data.get("keyword")
     description = request.data.get("description")
     priority = request.data.get("priority")
+
+    auth = authorize_user(User, user_info)
+    if not auth.is_auth:
+      return auth.response
+    if interest.user != auth.user:
+      return Response(
+        {"detail": "You are not the user of this interest."},
+        status=status.HTTP_403_FORBIDDEN,
+      )
+    
     if not (keyword and description and (priority != None)):
       return Response(
         {"detail": "[keyword, description, priority] fields missing."},
