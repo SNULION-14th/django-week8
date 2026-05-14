@@ -1,22 +1,22 @@
-# ./account/views.py
-
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema
+from rest_framework.views import APIView
 
 from account.request_serializers import SignInRequestSerializer, SignUpRequestSerializer
+from seminar.serializers import MessageResponseSerializer
 from .serializers import UserSerializer
 
 User = get_user_model()
+
 
 class SignUpView(APIView):
     @extend_schema(
         summary="회원가입",
         description="회원가입을 진행합니다.",
         request=SignUpRequestSerializer,
-        responses={201: UserSerializer, 400: "Bad Request"},
+        responses={201: UserSerializer, 400: OpenApiResponse(description="Bad Request")},
     )
     def post(self, request):
         user_serializer = UserSerializer(data=request.data)
@@ -28,12 +28,17 @@ class SignUpView(APIView):
             return Response(user_serializer.data, status=status.HTTP_201_CREATED)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class SignInView(APIView):
     @extend_schema(
         summary="로그인",
         description="로그인을 진행합니다.",
         request=SignInRequestSerializer,
-        responses={200: UserSerializer, 404: "Not Found", 400: "Bad Request"},
+        responses={
+            200: UserSerializer,
+            400: MessageResponseSerializer,
+            404: MessageResponseSerializer,
+        },
     )
     def post(self, request):
         username = request.data.get("username")
@@ -57,4 +62,3 @@ class SignInView(APIView):
             return Response(
                 {"message": "User does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
-
