@@ -20,7 +20,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 
 # 추가
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
 
 # Application definition
@@ -34,6 +34,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework', # DRF 라이브러리
     'post.apps.PostConfig', # post/apps.py내에 정의된 PostConfig 클래스를 지칭
+    'drf_spectacular',
+    'account.apps.AccountConfig',
+    'gatcha.apps.GatchaConfig',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -115,5 +119,15 @@ STATIC_URL = 'static/'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES' : (
         'rest_framework.permissions.AllowAny',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Gatcha API',
+    'DESCRIPTION': '개인 주제 가챠 서비스 API 명세서',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
+
+AUTH_USER_MODEL = 'account.User'
