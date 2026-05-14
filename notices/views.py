@@ -123,15 +123,15 @@ class SourceSubscriptionListView(APIView):
         {"detail": "User unmatched"},
         status=status.HTTP_400_BAD_REQUEST,
       )
-    if crawl_interval_minutes < 60:
-      return Response(
-        {"detail": "crawl interval must be more than 60 minutes"},
-        status=status.HTTP_400_BAD_REQUEST,
-      )
     
     if not (name and url):
       return Response(
         {"detail": "[source_name, source_url] fields missing."},
+        status=status.HTTP_400_BAD_REQUEST,
+      )
+    if crawl_interval_minutes and crawl_interval_minutes < 60:
+      return Response(
+        {"detail": "crawl interval must be more than 60 minutes"},
         status=status.HTTP_400_BAD_REQUEST,
       )
     
