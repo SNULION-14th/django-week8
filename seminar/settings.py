@@ -32,9 +32,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework', # DRF 라이브러리
-    'post.apps.PostConfig', # post/apps.py내에 정의된 PostConfig 클래스를 지칭
-]
+    'rest_framework',
+    'major.apps.MajorConfig',
+    'drf_spectacular',
+    'django_extensions',
+]   
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -110,10 +112,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 
-# 추가
-# AllowAny 뒤에 컴마 주의!
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES' : (
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
-    )
-}
+    ),
+}   
