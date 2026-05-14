@@ -1,5 +1,5 @@
-# ./tag/views.py
-
+from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,7 +9,8 @@ from .serializers import TagSerializer
 
 from post.models import Post
 from post.serializers import PostSerializer
-from drf_spectacular.utils import extend_schema
+from seminar.serializers import DetailResponseSerializer
+
 
 class TagListView(APIView):
   @extend_schema(
@@ -26,7 +27,7 @@ class TagListView(APIView):
     summary='태그 생성',
     description='태그를 생성합니다.',
     request=TagSerializer,
-    responses={201: TagSerializer}
+    responses={201: TagSerializer, 400: DetailResponseSerializer, 409: DetailResponseSerializer}
   )
   def post(self, request):
     content = request.data.get('content')
@@ -44,16 +45,19 @@ class TagListView(APIView):
 
 class TagDetailView(APIView):
   @extend_schema(
+    operation_id='tag_posts_list',
     summary='태그 내부 게시물 조회',
     description='해당 태그가 달린 게시물을 조회합니다.',
-    responses={200: PostSerializer(many=True), 204: 'No Content'}
+    responses={200: PostSerializer(many=True), 404: OpenApiResponse(description="Not Found")}
   )
   def get(self, request, tag_id):
-    try:
-      Tag.objects.get(id=tag_id)
-    except:
-      return Response({"detail": "Provided tag does not exist."}, status=status.HTTP_204_NO_CONTENT)
+    get_object_or_404(Tag, id=tag_id)
 
-    posts = Post.objects.filter(tags=tag_id)
+    posts = (
+      Post.objects.select_related("author")
+      .prefetch_related("tags", "comments", "like_users")
+      .filter(tags=tag_id)
+      .order_by("-created_at")
+    )
     serializer = PostSerializer(instance=posts, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

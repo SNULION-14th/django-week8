@@ -1,5 +1,3 @@
-# ./post/serializers.py
-
 from rest_framework.serializers import ModelSerializer
 from tag.serializers import TagSerializer
 from .models import Comment, Post
