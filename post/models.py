@@ -6,6 +6,10 @@ from django.db import models
 # 현재 시간 알기 위해
 from django.utils import timezone
 
+from django.conf import settings
+
+from tag.models import Tag
+
 # models.Model을 상속하여 Post라는 class를 선언해줍니다
 class Post(models.Model):
 		# title은 최대 256자의 character!
@@ -17,6 +21,43 @@ class Post(models.Model):
     # created_at의 경우는 현재 시간 자동으로 입력되게!
     created_at = models.DateTimeField(default=timezone.now)
 
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
+
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name='like_posts', through='Like')
+
+    tags = models.ManyToManyField(Tag, blank=True, related_name='posts')
+    
 	# 이건 print하면 어떤 값을 return할 지 알려주는 것!
     def __str__(self):
         return self.title
+    
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)
+
+class University(models.Model):
+    name = models.CharField(max_length=100)
+    country = models.CharField(max_length=50)
+    email_domain = models.CharField(max_length=100)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
+
+class Interest(models.Model):
+    name = models.CharField(max_length=50)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
+
+class Question(models.Model):
+    question_text = models.TextField()
+    category = models.CharField(max_length=50)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.question_text
